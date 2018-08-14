@@ -1,0 +1,16 @@
+steps:
+- name: 'gcr.io/cloud-builders/go'
+  args: ['install', './cmd/archiver']
+  env: ["PROJECT_ROOT=github.com/wardharold/imgark", "CGO_ENABLED=0", "GOOS=linux"]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--file', 'containers/Dockerfile.archiver', '--tag=gcr.io/$PROJECT_ID/archiver', '.']
+  id: 'archiver'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'gcr.io/$PROJECT_ID/archiver', 'gcr.io/$PROJECT_ID/archiver:${_BRANCH_NAME}']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'gcr.io/$PROJECT_ID/archiver', 'gcr.io/$PROJECT_ID/archiver:${_COMMIT_SHA}']
+
+images: 
+- 'gcr.io/$PROJECT_ID/archiver'
+- 'gcr.io/$PROJECT_ID/archiver:${_BRANCH_NAME}'
+- 'gcr.io/$PROJECT_ID/archiver:${_COMMIT_SHA}'

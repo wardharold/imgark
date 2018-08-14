@@ -1,0 +1,19 @@
+steps:
+- name: 'gcr.io/cloud-builders/go'
+  args: ['install', './cmd/receiver']
+  env: ["PROJECT_ROOT=github.com/wardharold/imgark", "CGO_ENABLED=0", "GOOS=linux"]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--file', 'containers/Dockerfile.receiver', '--tag=gcr.io/$PROJECT_ID/receiver', '.']
+  id: 'receiver'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'gcr.io/$PROJECT_ID/receiver', 'gcr.io/$PROJECT_ID/receiver:${_BRANCH_NAME}']
+  waitFor: ['receiver']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'gcr.io/$PROJECT_ID/receiver', 'gcr.io/$PROJECT_ID/receiver:${_COMMIT_SHA}']
+  waitFor: ['receiver']
+
+
+images: 
+- 'gcr.io/$PROJECT_ID/receiver'
+- 'gcr.io/$PROJECT_ID/receiver:${_BRANCH_NAME}'
+- 'gcr.io/$PROJECT_ID/receiver:${_COMMIT_SHA}'

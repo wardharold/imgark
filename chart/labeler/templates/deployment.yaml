@@ -1,0 +1,64 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: {{ .Values.image.args }}
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+          lifecycle:
+            preStop:
+              httpGet:
+                  path: /_prestop
+                  port: {{ .Values.service.internalPort }}
+          env:
+            - name: IMAGE_TOPIC
+              value: {{ .Values.imageTopic | default "images" }}
+            - name: LABELED_TOPIC 
+              value: {{ .Values.recognizedTopic | default "labeled" }}
+            - name: PROJECT_ID
+              value: {{ required "Must specify a project ID" .Values.projectId }}
+            - name: SERVICE_ACCOUNT
+              value: {{ required "Must specify a service account" .Values.serviceAccount }}
+            - name: MINIO_ENDPOINT
+              value: {{ .Values.minioEndpoint | default "image-store-minio.image-store:9000" }}
+            - name: MINIO_ACCESSKEYID
+              valueFrom:
+                  secretKeyRef:
+                      name: {{ .Values.minioNamespace | default "image-store" }}-minio
+                      key: accesskey
+            - name: MINIO_SECRETKEY
+              valueFrom:
+                  secretKeyRef:
+                      name: {{ .Values.minioNamespace | default "image-store" }}-minio
+                      key: secretkey
+          livenessProbe:
+            httpGet:
+              path: /_alive
+              port: {{ .Values.service.internalPort }}
+          readinessProbe:
+            httpGet:
+              path: /_ready
+              port: {{ .Values.service.internalPort }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
