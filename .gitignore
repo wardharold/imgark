@@ -4,9 +4,18 @@
 *.dll
 *.so
 *.dylib
+*.tgz
 
 # Test binary, build with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Phony build and chart files
+*.build
+*.chart
+
+# Terraform state files
+deploy/**/terraform.tfstate
+deploy/**/terraform.tfstate.backup
