@@ -1,4 +1,4 @@
-# Project Title
+# Image Archiver
 
 **imgark** is a simple kubernetes application that demonstrates how to use per pod Google Cloud Platform
 service accounts to enforce a least privilege policy for accessing Google Cloud Platform services.
@@ -102,5 +102,5 @@ gsutil ls gs://${IMAGE_BUCKET}
 
 ## License
 
-This project is licensed under the Apache 2.0 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the Apache 2.0 License - see the [LICENSE.md](LICENSE) file for details
 
