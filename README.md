@@ -5,7 +5,7 @@ service accounts to enforce a least privilege policy for accessing Google Cloud 
 
 ## Getting Started
 
-These instructions will get you a copy of the project built and deployed in your own Google Cloud Platform project.
+Here is how to get the project built and deployed in your own Google Cloud Platform project.
 
 ### Prerequisites
 
