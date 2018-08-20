@@ -97,11 +97,9 @@ func New(logger *sdlog.StackdriverLogger, mc *minio.Client, projectID, serviceAc
 	}
 
 	if !ok {
-		labeler.topic, err = pc.CreateTopic(ctx, labeledTopic)
-		if err != nil {
-			logger.LogError(fmt.Sprintf("Unable to create pubsub topic %s exists", labeledTopic), err)
-			return nil, err
-		}
+		err = fmt.Errorf("required topic does not exist: %s", labeledTopic)
+		logger.LogError(fmt.Sprintf("topic %s does not exist", labeledTopic), err)
+		return nil, err
 	}
 
 	return labeler, nil

@@ -99,11 +99,9 @@ func New(mc *minio.Client, bucket string, logger *sdlog.StackdriverLogger, proje
 	}
 
 	if !ok {
-		receiver.topic, err = pc.CreateTopic(ctx, topic)
-		if err != nil {
-			logger.LogError(fmt.Sprintf("Unable to create pubsub topic %s exists", topic), err)
-			return nil, err
-		}
+		err = fmt.Errorf("required topic does not exist: %s", topic)
+		logger.LogError(fmt.Sprintf("topic %s does not exist", topic), err)
+		return nil, err
 	}
 
 	go func() {
