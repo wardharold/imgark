@@ -1,6 +1,6 @@
 provider "google" {
   project = "${var.project}"
-  region  = "us-central1"
+  region  = "${var.region}"
 }
 
 # The APIs that must be enabled
@@ -81,7 +81,7 @@ data "google_iam_policy" "archiver_pod" {
     ]
   }
   binding {
-    role = "roles/pubsub.editor"
+    role = "roles/pubsub.subscriber"
 
     members = [
       "serviceAccount:${google_service_account.archiver_service_account.email}",
@@ -114,7 +114,14 @@ resource "google_project_iam_policy" "labeler" {
 
 data "google_iam_policy" "labeler_pod" {
   binding {
-    role = "roles/pubsub.editor"
+    role = "roles/pubsub.publisher"
+
+    members = [
+      "serviceAccount:${google_service_account.labeler_service_account.email}",
+    ]
+  }
+  binding {
+    role = "roles/pubsub.subscriber"
 
     members = [
       "serviceAccount:${google_service_account.labeler_service_account.email}",
@@ -147,7 +154,7 @@ resource "google_project_iam_policy" "receiver" {
 
 data "google_iam_policy" "receiver_pod" {
   binding {
-    role = "roles/pubsub.editor"
+    role = "roles/pubsub.publisher"
 
     members = [
       "serviceAccount:${google_service_account.receiver_service_account.email}",
@@ -189,4 +196,15 @@ resource "google_container_cluster" "cluster" {
       "https://www.googleapis.com/auth/userinfo.email"
     ]
   }
+}
+
+# Pubsub topics
+resource "google_pubsub_topic" "images_topic" {
+  project = "${var.project}"
+  name = "${var.images_topic}"
+}
+
+resource "google_pubsub_topic" "labeled_topic" {
+  project = "${var.project}"
+  name = "${var.labeled_topic}"
 }
