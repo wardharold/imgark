@@ -5,6 +5,7 @@
 *.so
 *.dylib
 *.tgz
+*.swp
 
 # Test binary, build with `go test -c`
 *.test
@@ -19,3 +20,4 @@
 # Terraform state files
 deploy/**/terraform.tfstate
 deploy/**/terraform.tfstate.backup
+deploy/**/.terraform
