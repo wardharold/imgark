@@ -81,7 +81,7 @@ data "google_iam_policy" "archiver_pod" {
     ]
   }
   binding {
-    role = "roles/pubsub.subscriber"
+    role = "roles/pubsub.editor"
 
     members = [
       "serviceAccount:${google_service_account.archiver_service_account.email}",
@@ -114,14 +114,7 @@ resource "google_project_iam_policy" "labeler" {
 
 data "google_iam_policy" "labeler_pod" {
   binding {
-    role = "roles/pubsub.publisher"
-
-    members = [
-      "serviceAccount:${google_service_account.labeler_service_account.email}",
-    ]
-  }
-  binding {
-    role = "roles/pubsub.subscriber"
+    role = "roles/pubsub.editor"
 
     members = [
       "serviceAccount:${google_service_account.labeler_service_account.email}",
@@ -155,6 +148,13 @@ resource "google_project_iam_policy" "receiver" {
 data "google_iam_policy" "receiver_pod" {
   binding {
     role = "roles/pubsub.publisher"
+
+    members = [
+      "serviceAccount:${google_service_account.receiver_service_account.email}",
+    ]
+  }
+  binding {
+    role = "roles/pubsub.viewer"
 
     members = [
       "serviceAccount:${google_service_account.receiver_service_account.email}",
