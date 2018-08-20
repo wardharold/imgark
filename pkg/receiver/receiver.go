@@ -68,7 +68,7 @@ func purgeOldObjects(mc *minio.Client, logger *sdlog.StackdriverLogger, bucket s
 
 // New creates and initializes a Receiver. The receiver accepts image upload requests over HTTP and stores received
 // images in a local object store (minio). It uses the specified serviceAccount to publish image received notifications
-// to its pubsub topic.
+// to its pubsub topic. Images are purged from the local object store every five minutes.
 func New(mc *minio.Client, bucket string, logger *sdlog.StackdriverLogger, projectID, serviceAccount, topic string) (*Receiver, error) {
 	client, err := google.DefaultClient(ctx, iam.CloudPlatformScope, "https://www.googleapis.com/auth/iam")
 	if err != nil {

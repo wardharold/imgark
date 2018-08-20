@@ -22,6 +22,7 @@ func MustGetenv(name string) string {
 	return val
 }
 
+// Creates a handler for an HTTP prestop lifecycle hook.
 func Prestop(cancel context.CancelFunc) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Cancelling ReceiveAndProcess")
